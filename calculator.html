@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Discounted Refund Calculator</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="workspace">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Shopify operations tool</p>
+            <h1>Discounted refund calculator</h1>
+          </div>
+          <p class="summary">
+            Split order-level discounts across returned items before issuing a partial refund.
+          </p>
+        </header>
+
+        <section class="panel">
+          <div class="panel-head">
+            <h2>Order items</h2>
+            <button id="addItem" type="button">+ Add item</button>
+          </div>
+          <div class="table item-grid labels" aria-hidden="true">
+            <span>Item</span>
+            <span>Unit price</span>
+            <span>Qty</span>
+            <span>Return qty</span>
+            <span></span>
+          </div>
+          <div id="items" class="items"></div>
+        </section>
+
+        <section class="panel controls">
+          <h2>Order discount</h2>
+          <div class="discount-row">
+            <label class="choice">
+              <input type="radio" name="discountType" value="percent" checked />
+              Percent
+            </label>
+            <label class="choice">
+              <input type="radio" name="discountType" value="fixed" />
+              Fixed amount
+            </label>
+            <label>
+              <span>Value</span>
+              <input id="discountValue" type="number" min="0" step="0.01" value="10" />
+            </label>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <h2>Refund breakdown</h2>
+            <div class="action-row">
+              <button id="copySummary" type="button">Copy summary</button>
+              <button id="downloadCsv" class="secondary" type="button">Download CSV</button>
+            </div>
+          </div>
+          <div class="result-grid">
+            <div>
+              <span>Subtotal</span>
+              <strong id="subtotal">$0.00</strong>
+            </div>
+            <div>
+              <span>Discount</span>
+              <strong id="discount">-$0.00</strong>
+            </div>
+            <div>
+              <span>Customer paid</span>
+              <strong id="paid">$0.00</strong>
+            </div>
+            <div class="refund-total">
+              <span>Suggested refund</span>
+              <strong id="refund">$0.00</strong>
+            </div>
+          </div>
+          <div class="breakdown-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th>Line total</th>
+                  <th>Discount share</th>
+                  <th>Net unit</th>
+                  <th>Returned</th>
+                  <th>Refund</th>
+                </tr>
+              </thead>
+              <tbody id="breakdown"></tbody>
+            </table>
+          </div>
+          <label class="copy-box">
+            <span>Operator note</span>
+            <textarea id="copyText" rows="7" readonly></textarea>
+          </label>
+        </section>
+      </section>
+    </main>
+
+    <template id="itemTemplate">
+      <div class="item-grid row" data-item-row>
+        <input data-name type="text" placeholder="Product name" />
+        <input data-price type="number" min="0" step="0.01" placeholder="0.00" />
+        <input data-quantity type="number" min="1" step="1" />
+        <input data-return-quantity type="number" min="0" step="1" />
+        <button data-remove type="button" aria-label="Remove item">x</button>
+      </div>
+    </template>
+
+    <script src="app.js"></script>
+  </body>
+</html>
