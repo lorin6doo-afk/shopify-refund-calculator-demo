@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://lorin6doo-afk.github.io/shopify-refund-calculator-demo/sitemap.xml
