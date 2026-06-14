@@ -203,6 +203,65 @@ button:hover {
   line-height: 1.6;
 }
 
+.article-shell {
+  max-width: 920px;
+}
+
+.article {
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 32px;
+  box-shadow: 0 12px 30px rgba(31, 41, 35, 0.06);
+}
+
+.article h1 {
+  margin-bottom: 18px;
+}
+
+.article h2 {
+  margin-top: 32px;
+}
+
+.article p,
+.article li {
+  color: var(--muted);
+  font-size: 17px;
+  line-height: 1.65;
+}
+
+.article strong {
+  color: var(--ink);
+}
+
+.article-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+  margin: 24px 0 10px;
+}
+
+.lead {
+  max-width: 780px;
+  font-size: 19px !important;
+}
+
+pre {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 16px;
+  background: #f3f6f2;
+}
+
+code {
+  color: var(--ink);
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
 .feature-list {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -416,6 +475,10 @@ th {
   .landing-band,
   .feature-list {
     grid-template-columns: 1fr;
+  }
+
+  .article {
+    padding: 22px;
   }
 
   .landing-hero {

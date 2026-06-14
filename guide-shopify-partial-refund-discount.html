@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Shopify partial refund discount calculator</title>
+    <meta
+      name="description"
+      content="How to check Shopify partial refunds when an order-level discount is at risk after a customer returns only part of an order."
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="shell article-shell">
+      <article class="article">
+        <p class="eyebrow">Shopify refund math</p>
+        <h1>Shopify partial refund discount calculator</h1>
+        <p class="lead">
+          When a customer returns one item from an order that used an order-level
+          discount code, Shopify may calculate the refund from the discounted
+          line value. That can leave the customer with less of the original
+          discount on the items they kept.
+        </p>
+
+        <div class="article-actions">
+          <a class="button-link" href="calculator.html">Open calculator</a>
+          <a class="text-link" href="index.html">Back to demo</a>
+        </div>
+
+        <section>
+          <h2>The common example</h2>
+          <p>
+            A customer buys ten items for <strong>$500</strong> and uses a
+            <strong>$50</strong> order-level discount. They paid
+            <strong>$450</strong>.
+          </p>
+          <p>
+            If they return one <strong>$50</strong> item, a discounted line
+            refund may be <strong>$45</strong>. The customer now paid
+            <strong>$405</strong> for the <strong>$450</strong> of items they
+            kept, which means only <strong>$45</strong> of the original
+            discount remains.
+          </p>
+          <p>
+            A retain-discount refund compares that with refunding the full
+            returned line value, so the customer keeps the original
+            <strong>$50</strong> discount on the items they did not return.
+          </p>
+        </section>
+
+        <section>
+          <h2>What to check before issuing the refund</h2>
+          <ul>
+            <li>Original order subtotal before discounts.</li>
+            <li>Total order-level discount.</li>
+            <li>Which line items and quantities are being returned.</li>
+            <li>Shopify-style discounted line refund.</li>
+            <li>Retain-discount refund amount.</li>
+            <li>Discount at risk if you follow the default line refund.</li>
+            <li>Tax, shipping, and accounting treatment before finalizing.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Formula used by this calculator</h2>
+          <pre><code>paid = subtotal - discount
+retainedSubtotal = subtotal - returnedSubtotal
+targetCustomerKeepsPaying = max(retainedSubtotal - discount, 0)
+retainDiscountRefund = clamp(paid - targetCustomerKeepsPaying, 0, paid)
+discountAtRisk = retainDiscountRefund - shopifyStyleRefund</code></pre>
+        </section>
+
+        <section>
+          <h2>Important limit</h2>
+          <p>
+            This is an operations helper, not tax or accounting advice. Use it
+            to sanity-check the refund amount and generate an internal note, but
+            verify tax, shipping, payment gateway, and accounting effects before
+            issuing refunds at scale.
+          </p>
+        </section>
+      </article>
+    </main>
+  </body>
+</html>
