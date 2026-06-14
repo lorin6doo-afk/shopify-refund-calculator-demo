@@ -15,7 +15,7 @@
             <h1>Discounted refund calculator</h1>
           </div>
           <p class="summary">
-            Split order-level discounts across returned items before issuing a partial refund.
+            Compare Shopify-style line refunds with a retain-discount refund before issuing a partial refund.
           </p>
         </header>
 
@@ -73,8 +73,16 @@
               <span>Customer paid</span>
               <strong id="paid">$0.00</strong>
             </div>
+            <div>
+              <span>Shopify-style refund</span>
+              <strong id="shopifyRefund">$0.00</strong>
+            </div>
+            <div>
+              <span>Discount at risk</span>
+              <strong id="discountAtRisk">$0.00</strong>
+            </div>
             <div class="refund-total">
-              <span>Suggested refund</span>
+              <span>Retain-discount refund</span>
               <strong id="refund">$0.00</strong>
             </div>
           </div>
@@ -87,7 +95,8 @@
                   <th>Discount share</th>
                   <th>Net unit</th>
                   <th>Returned</th>
-                  <th>Refund</th>
+                  <th>Shopify-style refund</th>
+                  <th>Full line value</th>
                 </tr>
               </thead>
               <tbody id="breakdown"></tbody>

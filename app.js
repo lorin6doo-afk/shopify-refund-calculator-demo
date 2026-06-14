@@ -104,6 +104,7 @@ function calculateRefund({
     const refundCents = Math.round(
       (netLineCents / item.quantity) * returnedQuantity
     );
+    const returnedSubtotalCents = item.priceCents * returnedQuantity;
 
     return {
       ...item,
@@ -112,17 +113,41 @@ function calculateRefund({
       netLineCents,
       perUnitNetCents,
       returnedQuantity,
+      returnedSubtotalCents,
       refundCents
     };
   });
 
-  const refundCents = rows.reduce((sum, row) => sum + row.refundCents, 0);
+  const shopifyStyleRefundCents = rows.reduce(
+    (sum, row) => sum + row.refundCents,
+    0
+  );
+  const returnedSubtotalCents = rows.reduce(
+    (sum, row) => sum + row.returnedSubtotalCents,
+    0
+  );
+  const retainedSubtotalCents = subtotalCents - returnedSubtotalCents;
+  const targetCustomerKeepsPayingCents = Math.max(
+    retainedSubtotalCents - discountCents,
+    0
+  );
+  const retainedDiscountRefundCents = clamp(
+    (subtotalCents - discountCents) - targetCustomerKeepsPayingCents,
+    0,
+    subtotalCents - discountCents
+  );
+  const discountAtRiskCents =
+    retainedDiscountRefundCents - shopifyStyleRefundCents;
 
   return {
     subtotalCents,
     discountCents,
     paidCents: subtotalCents - discountCents,
-    refundCents,
+    refundCents: retainedDiscountRefundCents,
+    shopifyStyleRefundCents,
+    retainedDiscountRefundCents,
+    returnedSubtotalCents,
+    discountAtRiskCents,
     rows
   };
 }
@@ -130,7 +155,9 @@ function calculateRefund({
 function formatResultSummary(result) {
   const returnedRows = result.rows.filter((row) => row.returnedQuantity > 0);
   const lines = [
-    `Suggested refund: ${money(result.refundCents)}`,
+    `Retain-discount refund: ${money(result.retainedDiscountRefundCents)}`,
+    `Shopify-style line refund: ${money(result.shopifyStyleRefundCents)}`,
+    `Discount at risk: ${money(result.discountAtRiskCents)}`,
     `Customer paid: ${money(result.paidCents)}`,
     `Order discount allocated: -${money(result.discountCents)}`,
     "",
@@ -142,7 +169,7 @@ function formatResultSummary(result) {
   } else {
     returnedRows.forEach((row) => {
       lines.push(
-        `${row.returnedQuantity} x ${row.name} at ${money(row.perUnitNetCents)} = ${money(row.refundCents)}`
+        `${row.returnedQuantity} x ${row.name}: ${money(row.returnedSubtotalCents)} full line value, ${money(row.refundCents)} Shopify-style line refund`
       );
     });
   }
@@ -157,7 +184,8 @@ function resultToCsv(result) {
     "Discount share",
     "Net unit",
     "Returned quantity",
-    "Refund"
+    "Shopify-style refund",
+    "Full line value"
   ];
   const rows = result.rows.map((row) => [
     row.name,
@@ -165,7 +193,8 @@ function resultToCsv(result) {
     `-${money(row.discountShareCents)}`,
     money(row.perUnitNetCents),
     row.returnedQuantity,
-    money(row.refundCents)
+    money(row.refundCents),
+    money(row.returnedSubtotalCents)
   ]);
 
   return [header, ...rows]
@@ -199,7 +228,15 @@ function render() {
   document.querySelector("#subtotal").textContent = money(result.subtotalCents);
   document.querySelector("#discount").textContent = `-${money(result.discountCents)}`;
   document.querySelector("#paid").textContent = money(result.paidCents);
-  document.querySelector("#refund").textContent = money(result.refundCents);
+  document.querySelector("#shopifyRefund").textContent = money(
+    result.shopifyStyleRefundCents
+  );
+  document.querySelector("#discountAtRisk").textContent = money(
+    result.discountAtRiskCents
+  );
+  document.querySelector("#refund").textContent = money(
+    result.retainedDiscountRefundCents
+  );
   document.querySelector("#copyText").value = formatResultSummary(result);
 
   document.querySelector("#breakdown").innerHTML = result.rows
@@ -212,6 +249,7 @@ function render() {
           <td>${money(row.perUnitNetCents)}</td>
           <td>${row.returnedQuantity}</td>
           <td>${money(row.refundCents)}</td>
+          <td>${money(row.returnedSubtotalCents)}</td>
         </tr>
       `
     )
